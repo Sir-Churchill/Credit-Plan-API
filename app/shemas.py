@@ -37,13 +37,11 @@ class PlanPerformance(BaseModel):
 
 class MonthlyAnalytics(BaseModel):
     month_year: str
-    # Видачі
     issuance_count: int
     issuance_plan_sum: float
     issuance_fact_sum: float
     issuance_performance: float
     issuance_share_of_year: float
-    # Збір
     payments_count: int
     payments_plan_sum: float
     payments_fact_sum: float

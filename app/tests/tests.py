@@ -75,7 +75,6 @@ async def test_get_user_credits_empty_list(client):
 
 @pytest.mark.asyncio
 async def test_plans_insert_invalid_file_type(client):
-    # Відправляємо просто текст замість Excel
     file_content = b"this is not an excel file"
     response = await client.post(
         "/plans_insert",

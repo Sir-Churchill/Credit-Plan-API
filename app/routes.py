@@ -212,14 +212,10 @@ async def get_yearly_analytics(year: int, db: AsyncSession = Depends(get_db)):
     )
     payments_data = {int(r.month): r for r in payments_res.all()}
 
-    # 2. Отримуємо список словників від сервісу (чиста математика)
     raw_results = AnalyticsService.calculate_yearly_data(
         year, plans, credits_data, payments_data
     )
 
-    # 3. ФІКСАЦІЯ: Перетворюємо словники в об'єкти MonthlyAnalytics
-    # Це гарантує, що якщо сервіс щось порахував не так, Pydantic видасть помилку тут
     validated_data = [MonthlyAnalytics(**item) for item in raw_results]
 
-    # 4. Повертаємо фінальну відповідь
     return YearlyAnalyticsResponse(year=year, data=validated_data)
