@@ -1,6 +1,5 @@
+import logging
 import os
-import asyncio
-
 import numpy as np
 import pandas as pd
 from sqlalchemy import insert, delete, select, func
@@ -16,6 +15,7 @@ IMPORT_CHART = [
     ("payments.csv", Payment),
 ]
 
+
 async def upload():
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -24,16 +24,20 @@ async def upload():
             csv_path = os.path.join(current_dir, "..", "data_csv", file_name)
 
             if not os.path.exists(csv_path):
-                print(f"⚠️ Пропущено: {file_name} не знайдено")
+                logging.info(f"Пропущено: {file_name} не знайдено")
                 continue
 
             try:
 
-                result = await session.execute(select(func.count()).select_from(model_class))
+                result = await session.execute(
+                    select(func.count()).select_from(model_class)
+                )
                 count = result.scalar()
 
                 if count > 0:
-                    print(f"ℹ️ Пропущено: {model_class.__tablename__} вже має дані ({count} записів).")
+                    logging.info(
+                        f"Пропущено: {model_class.__tablename__} вже має дані ({count} записів)."
+                    )
                     continue
 
                 df = pd.read_csv(csv_path, sep="\t")
@@ -47,8 +51,8 @@ async def upload():
                         await session.execute(insert(model_class), data)
 
                     await session.commit()
-                    print(f"✅ {file_name} -> {model_class.__tablename__}")
+                    logging.info(f"{file_name} -> {model_class.__tablename__}")
 
             except Exception as e:
-                print(f"❌ Помилка у {file_name}: {e}")
+                logging.warn(f"Помилка у {file_name}: {e}")
                 await session.rollback()
