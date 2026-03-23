@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 import uvicorn
@@ -16,7 +17,7 @@ async def lifespan(app: FastAPI):
     try:
         await upload()
     except Exception as e:
-        print(f"❌ Помилка автоімпорту при старті: {e}")
+        logging.info(f"Помилка автоімпорту при старті: {e}")
     yield
 
 
